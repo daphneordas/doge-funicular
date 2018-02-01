@@ -1,11 +1,9 @@
 import subprocess
 import re
-import timeit
 
 
 def ping_ips():
     user_ip_input = input("Input comma separated ip addresses: ")
-    # user_ip_input = '172.217.003.163'
     # process the user input (string separated by commas) into list
     user_ip_list = user_ip_input.split(",")
 
@@ -34,10 +32,10 @@ def ping_ips():
             print("This was the first reply: %s" % digits.group())
 
         except subprocess.CalledProcessError:
-            print(f"{modified_ip} pinged, >> request timed out")
+            print("%s pinged, >> request timed out" % ip)
+            # print(f"{modified_ip} pinged, >> request timed out")
             # print("{ip} pinged, >> request timed out".format(ip=ip))
 
 
 if __name__ == "__main__":
     ping_ips()
-    # timeit.timeit('ping_ips()','from __main__ import ping_ips')

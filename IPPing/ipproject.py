@@ -4,7 +4,6 @@ import re
 
 def ping_ips():
     user_ip_input = input("Input comma separated ip addresses: ")
-    # user_ip_input = '172.217.003.163'
     # process the user input (string separated by commas) into list
     user_ip_list = user_ip_input.split(",")
 
@@ -14,7 +13,7 @@ def ping_ips():
         triplet = ip.split(".")
         # to cover cases like 1.1.1.1.1 or 123
         if len(triplet) != 4:
-            print("%s is an invalid ip address, please re-enter only valid ip addresses." % ip)
+            print(f"{ip} is an invalid ip address, please re-enter only valid ip addresses.")
             return
         modified_ip = []
         for i in range(0, 4):
@@ -23,7 +22,7 @@ def ping_ips():
             if not triplet_check:
                 triplet_check = 0
             if int(triplet_check) > 256 or int(triplet_check) < 0:
-                print("%s is an invalid ip address, please re-enter only valid ip addresses." % ip)
+                print(f"{ip} is an invalid ip address, please re-enter only valid ip addresses.")
                 return
             modified_ip.append(str(triplet_check))
         stripped_ip = '.'.join(modified_ip)
@@ -38,14 +37,14 @@ def ping_ips():
             ping_regex = re.compile(r'Reply from \d*.\d*.\d*.\d*: bytes=\d* time=\d*ms TTL=\d*')
             # actually does the searching for you
             digits = ping_regex.search(ping_command_output)
-            print("%s pinged, >> request successful" % ip)
-            print("This was the first reply: %s" % digits.group())
+            print(f"{ip} pinged, >> request successful")
+            print(f"This was the first reply: {digits.group()}")
 
         except subprocess.CalledProcessError:
             print(f"{ip} pinged, >> request timed out")
             # print("{ip} pinged, >> request timed out".format(ip=ip))
+            # print("%s pinged, >> request timed out" % ip)
 
 
 if __name__ == "__main__":
     ping_ips()
-    # timeit.timeit('ping_ips()','from __main__ import ping_ips')
