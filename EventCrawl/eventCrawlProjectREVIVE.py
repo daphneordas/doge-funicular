@@ -1,17 +1,21 @@
-import datetime
-from bs4 import BeautifulSoup
+import os
 import re
+import datetime
+import time
+# TODO: ^ replace these sleeps after with webdriverwait plz
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
-import time
-# TODO: ^ replace these sleeps after with webdriverwait plz
+
 
 options = webdriver.ChromeOptions()
 options.add_argument('--disable-notifications')
 options.add_argument('--start-maximized')
-# Change this to be the place where you put chromedriver.exe
-chromedriver_path_location = 'C:\Program Files (x86)\chromedriver_win32\chromedriver.exe'
+# proxy setup for running at office
+# options.add_argument('--proxy-server=http://proxy-us.intel.com:911')
+working_file_path = os.getcwd()
+chromedriver_path_location = f'{working_file_path}\Resources\webdriver\chromedriver.exe'
 driver = webdriver.Chrome(chromedriver_path_location, options=options)
 # TODO: set a polling time limit for elements to appear on the page
 # wait = WebDriverWait(driver, 5)
@@ -36,6 +40,8 @@ search_button.submit()
 
 # TODO: replace these sleeps after with webdriverwait plz
 time.sleep(10)
+# !small warning!: for some reason, this particular xpath expression is flaky
+# it fails more often the more I crawl the webpage
 places_container_xpath = '//*[starts-with(@id, "xt_uniq_")]/div/div[1]/a'
 like_button = driver.find_element_by_xpath(f'{places_container_xpath}/following-sibling::div/span/div/div/div[2]'
                                            f'/span/button')
@@ -61,22 +67,21 @@ soup = BeautifulSoup(venue_events_html, 'html.parser')
 driver.close()
 
 current_date_time = datetime.datetime.today().strftime('%m-%d-%Y-%H-%M-%S')
-file_path = f'C:\\Users\dordas\PycharmProjects\doge-funicular\EventCrawl\EventFiles\{current_date_time}.txt'
+file_path = f'{working_file_path}\EventFiles\{current_date_time}.txt'
 print(f'Writing event information to file: {current_date_time}.txt...')
-with open(file_path, 'a+') as event_file:
+# Pycharm gives an error if I don't specify the encoding
+with open(file_path, 'a+', encoding='utf8') as event_file:
     # TODO: add check if page has events; search for '... does not have any upcoming events.'
     # no_upcoming_events = soup.find_all(class_=re.compile(''))
     upcoming_events_divs = soup.find_all(class_=re.compile('_24er'), limit=5)
     for event_cell in upcoming_events_divs:
         event_month = event_cell.table.tbody.tr.td.span.span.text
         event_day = event_cell.table.tbody.tr.td.span.span.next_sibling.text
-        event_link = facebook_url + event_cell.table.tbody.tr.td.next_sibling.div.div.a['href']
+        event_link = f'{facebook_url}{event_cell.table.tbody.tr.td.next_sibling.div.div.a["href"]}'
         event_name = event_cell.table.tbody.tr.td.next_sibling.div.div.a.span.text
         event_time = event_cell.table.tbody.tr.td.next_sibling.div.div.next_sibling.span.text
         event_venue = event_cell.table.tbody.tr.td.next_sibling.next_sibling.div.div.a.text
-        event_location = event_cell.table.tbody.tr.td.next_sibling.next_sibling.div.div.next_sibling.text
 
-        # write all info to a file, the file appears in the same place this script is located
         event_file.write(f'Event Date: {event_month} {event_day}\nTime: {event_time}\nEvent Venue: {event_venue}\n'
                          f'Event Name: {event_name}\nEvent Web link: {event_link}\n\n')
 

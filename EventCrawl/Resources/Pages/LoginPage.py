@@ -1,15 +1,14 @@
 from EventCrawl.Resources.Pages.Page import Page
+from EventCrawl.Resources.Pages.HomePage import HomePage
 
 
 class LoginPage(Page):
     def enter_email(self, email):
-        email_field = self.browser.driver.find_element_by_xpath('//*[@id="email"]')
-        email_field.send_keys(email)
+        self.enter_with_xpath('//*[@id="email"]', email)
 
     def enter_password(self, password):
-        password_field = self.browser.driver.find_element_by_xpath('//*[@id="pass"]')
-        password_field.send_keys(password)
+        self.enter_with_xpath('//*[@id="pass"]', password)
 
     def submit_login(self):
-        login_button = self.browser.driver.find_element_by_xpath('//*[@id="loginbutton"]')
-        login_button.submit()
+        self.submit_with_xpath('//*[@id="loginbutton"]')
+        return HomePage(self.browser, self.browser.driver.current_url)

@@ -16,14 +16,9 @@ class Browser:
 
         self.driver = webdriver.Chrome(chromedriver_path_location, options=webdriver_options)
 
-    def next_page(self):
-        pass
-
     def wait_for_element(self):
+        # TODO: for replacing sleeps with webdriverwait
         pass
-
-    def get_page_source(self):
-        return self.driver.page_source
 
     def close_browser(self):
         self.driver.close()
